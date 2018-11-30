@@ -3,13 +3,14 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Book } from '../book';
+import { DirtyAware } from '../../shared/routing/dirty-aware';
 
 @Component({
   selector: 'app-book-details',
   templateUrl: './book-details.component.html',
-  styleUrls: ['./book-details.component.scss']
+  styleUrls: ['./book-details.component.scss'],
 })
-export class BookDetailsComponent implements OnInit {
+export class BookDetailsComponent implements OnInit, DirtyAware {
   book: Book;
   submitted: boolean;
   bookForm: FormGroup;
@@ -18,7 +19,7 @@ export class BookDetailsComponent implements OnInit {
     private formBuilder: FormBuilder,
     private bookService: BookService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {
     this.book = new Book();
   }
@@ -33,9 +34,9 @@ export class BookDetailsComponent implements OnInit {
         [
           Validators.required,
           Validators.maxLength(13),
-          Validators.pattern('[0-9]*')
-        ]
-      ]
+          Validators.pattern('[0-9]*'),
+        ],
+      ],
     });
 
     this.route.data.subscribe((data: { book: Book }) => {
@@ -59,5 +60,9 @@ export class BookDetailsComponent implements OnInit {
 
   cancelForm(): void {
     this.router.navigate(['/books']);
+  }
+
+  isDirty(): boolean {
+    return this.bookForm.dirty && !this.submitted;
   }
 }
